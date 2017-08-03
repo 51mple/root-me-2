@@ -12,14 +12,7 @@ shift = 1
 result = ''
 
 for letter in msg:
-	if letter == ' ':
-		shift += 1
-		result += letter
-		continue
-	elif letter == '\n':
-		shift += 1
-		result += letter
-	elif letter == '\'':
+	if letter in [' ', '\n', '\'']:
 		shift += 1
 		result += letter
 	else:
@@ -29,5 +22,3 @@ for letter in msg:
 			result += chr(ord(letter) + shift)
 
 print(result)
-
-
