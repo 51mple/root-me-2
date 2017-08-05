@@ -1,0 +1,18 @@
+Indice du challenge: le développeur oublie souvent des fichiers de sauvegarde
+On démarre le challenge, et on cherche quel peut bien être le fichier de sauvegarde oublié.
+Plusieurs possibilités: le nom de fichier commence ou termine par un '~', a une extension en .bak, .old, .swp, contient le mot backup, ou contient le mot copie/copy...
+La page d'accueil du site est index.php, alors on cherche un backup pour ce fichier
+au final on tombe sur index.php.bak
+La partie intéressante se situe dans la condition à la ligne 58:
+
+if (( isset ($password) && $password!="" && auth($password,$hidden_password)==1) || (is_array($_SESSION) && $_SESSION["logged"]==1 ) ){
+    $aff=display("well done, you can validate with the password : $hidden_password");
+} else {
+    $aff=display("try again");
+}
+
+Il y a donc 2 possibilités pour que la condition soit vraie: soit $password == $hidden_password, soit $_SESSION["logged"] == 1
+C'est là que la vulnérabilité sur register_globals intervient: il suffit de mettre logged à 1 dans l'URL pour valider:
+http://challenge01.root-me.org/web-serveur/ch17/?logged=1
+
+well done, you can validate with the password : NoTQYipcRKkgrqG
