@@ -1,0 +1,3 @@
+Inject PHP backdoor in GIF image as a comment
+Name the GIF file like with this format: <name>.php<null byte>.gif
+enjoy
