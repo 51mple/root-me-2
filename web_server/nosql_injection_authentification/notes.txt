@@ -1,0 +1,2 @@
+{'login':'$LOGIN', 'pass':'$PASS'}
+{'login':' test','$or':[{},{'a':'a ', 'pass':'$PASS'}],'$comment':'plop '}
